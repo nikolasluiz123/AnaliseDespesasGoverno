@@ -12,7 +12,7 @@ class DAO(ABC):
         self.helper = helper
 
 
-class CategoriaDespesaDAO(DAO):
+class DespesaEmpenhoDAO(DAO):
 
     def get_dataframe_quantidade_categorias(self, tipo_credito: str=None) -> DataFrame:
         query_select = """
@@ -75,9 +75,6 @@ class CategoriaDespesaDAO(DAO):
         """
 
         return self.helper.get_dataframe(query)
-
-
-class TipoCreditoDAO(DAO):
 
     def get_dataframe_valores_tipo_credito(self, categoria_despesa: str = None) -> DataFrame:
         query_select = """

@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 from dash import dcc, html, Input, Output
 
-from data.data_access_objects import CategoriaDespesaDAO, TipoCreditoDAO
+from data.data_access_objects import DespesaEmpenhoDAO
 from data.sqlite_db_helper import SQLite3Helper
 
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
@@ -27,8 +27,7 @@ urls = {
 helper = SQLite3Helper(db_name='despesas')
 helper.create_database(urls=urls)
 
-categoria_despesa_dao = CategoriaDespesaDAO(helper)
-tipo_credito_dao = TipoCreditoDAO(helper)
+despesa_empenho_dao = DespesaEmpenhoDAO(helper)
 
 app = dash.Dash(__name__, external_stylesheets=['assets/styles.css', dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP])
 
@@ -134,7 +133,7 @@ def atualizar_graficos(clickData_categoria, clickData_tipo_credito):
 
 def get_figure_quantidade_categoria(tipo_credito_clicado=None):
     fig_categoria = px.pie(
-        categoria_despesa_dao.get_dataframe_quantidade_categorias(tipo_credito=tipo_credito_clicado),
+        despesa_empenho_dao.get_dataframe_quantidade_categorias(tipo_credito=tipo_credito_clicado),
         values='quantidade',
         names='categoria',
         title='Categoria de Despesas',
@@ -149,7 +148,7 @@ def get_figure_quantidade_categoria(tipo_credito_clicado=None):
 
 
 def get_figure_tipo_credito(categoria_clicada=None):
-    df_valor_tipo_credito_filtrado = tipo_credito_dao.get_dataframe_valores_tipo_credito(
+    df_valor_tipo_credito_filtrado = despesa_empenho_dao.get_dataframe_valores_tipo_credito(
         categoria_despesa=categoria_clicada
     )
     fig_tipo_credito_filtrado = px.bar(
@@ -169,7 +168,7 @@ def get_figure_tipo_credito(categoria_clicada=None):
 
 
 def get_figure_valor_categoria_tempo(categoria_clicada=None, tipo_credito_clicado=None):
-    df_valor_categoria_tempo_filtrado = categoria_despesa_dao.get_dataframe_valor_categoria_tempo(
+    df_valor_categoria_tempo_filtrado = despesa_empenho_dao.get_dataframe_valor_categoria_tempo(
         categoria_despesa=categoria_clicada,
         tipo_credito=tipo_credito_clicado,
     )
