@@ -1,15 +1,7 @@
-from abc import ABC
-
 import pandas as pd
 from pandas import DataFrame
 
-from data.sqlite_db_helper import SQLite3Helper
-
-
-class DAO(ABC):
-
-    def __init__(self, helper: SQLite3Helper):
-        self.helper = helper
+from data.access_objects.common import DAO
 
 
 class DespesaEmpenhoDAO(DAO):

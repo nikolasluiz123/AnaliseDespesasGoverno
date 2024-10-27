@@ -5,7 +5,8 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 from dash import dcc, html, Input, Output
 
-from data.data_access_objects import DespesaEmpenhoDAO
+from data.access_objects.despesas import DespesaEmpenhoDAO
+from data.access_objects.liquidacoes import LiquidacoesDAO
 from data.sqlite_db_helper import SQLite3Helper
 
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
@@ -28,6 +29,7 @@ helper = SQLite3Helper(db_name='despesas')
 helper.create_database(urls=urls)
 
 despesa_empenho_dao = DespesaEmpenhoDAO(helper)
+liquidacao_dao = LiquidacoesDAO(helper)
 
 app = dash.Dash(__name__, external_stylesheets=['assets/styles.css', dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP])
 
@@ -127,7 +129,76 @@ def exibir_conteudo(aba):
             ]
         )
     elif aba == 'tab-despesas-liquidacao':
-        return html.H1('Em Desenvolvimento 1')
+        return html.Div(
+            children=[
+                html.Div(
+                    style={
+                        'display': 'flex',
+                    },
+                    children=[
+                        dcc.Graph(
+                            id={'type': 'grafico', 'index': 'top5_unidades_gestoras_mais_liquidacoes'},
+                            figure=get_figure_top5_undiades_gestoras_mais_liquidacoes(),
+                            style={
+                                'width': '50%'
+                            }
+                        ),
+                    ]
+                ),
+                html.Div(
+                    style={
+                        'display': 'flex',
+                    },
+                    children=[
+                        dcc.Graph(
+                            id={'type': 'grafico', 'index': 'top5_favorecidos'},
+                            figure=get_figure_top5_mais_favorecidos(),
+                            style={
+                                'width': '50%'
+                            }
+                        ),
+                        dcc.Graph(
+                            id={'type': 'grafico', 'index': 'top5_subitens'},
+                            figure=get_figure_top_5_subitens(),
+                            style={
+                                'width': '50%'
+                            }
+                        ),
+                    ]
+                ),
+                html.Div(
+                    children=[
+                        dcc.Graph(
+                            id={'type': 'grafico', 'index': 'top10_diferenca_empenho_liquidacao'},
+                            figure=get_figure_top10_diferenca_empenho_liquidacao(),
+                        )
+                    ]
+                )
+                # html.Div(
+                #     style={
+                #         'width': '100%',
+                #     },
+                #     children=[
+                #         dcc.Graph(
+                #             id={'type': 'grafico', 'index': 'top5_unidades_gestoras_mais_liquidacoes'},
+                #             figure=get_figure_top5_undiades_gestoras_mais_liquidacoes()
+                #         ),
+                #         dcc.Graph(
+                #             id={'type': 'grafico', 'index': 'top5_favorecidos'},
+                #             figure=get_figure_top5_mais_favorecidos(),
+                #         ),
+                #         dcc.Graph(
+                #             id={'type': 'grafico', 'index': 'top5_subitens'},
+                #             figure=get_figure_top_5_subitens(),
+                #         ),
+                #         dcc.Graph(
+                #             id={'type': 'grafico', 'index': 'top10_diferenca_empenho_liquidacao'},
+                #             figure=get_figure_top10_diferenca_empenho_liquidacao(),
+                #         )
+                #     ]
+                # )
+            ]
+        )
     elif aba == 'tab-despesas-pagamento':
         return html.H1('Em Desenvolvimento 2')
 
@@ -151,6 +222,17 @@ def atualizar_graficos(click_data_categoria,
                        click_data_tipo_credito,
                        click_data_quantidade_tipo_operacao,
                        click_data_funcao_maior_investimento):
+
+    return atualizar_graficos_empenho(click_data_categoria,
+                                      click_data_funcao_maior_investimento,
+                                      click_data_quantidade_tipo_operacao,
+                                      click_data_tipo_credito)
+
+
+def atualizar_graficos_empenho(click_data_categoria,
+                               click_data_funcao_maior_investimento,
+                               click_data_quantidade_tipo_operacao,
+                               click_data_tipo_credito):
     categoria_clicada = click_data_categoria['points'][0]['label'] if click_data_categoria else None
     tipo_credito_clicado = click_data_tipo_credito['points'][0]['label'] if click_data_tipo_credito else None
     tipo_operacao_clicada = click_data_quantidade_tipo_operacao['points'][0]['label'] if click_data_quantidade_tipo_operacao else None
@@ -182,9 +264,11 @@ def atualizar_graficos(click_data_categoria,
     fig_funcao_maior_investimento_filtrado = get_figure_funcoes_maior_investimento(categoria_despesa=categoria_clicada,
                                                                                    tipo_credito=tipo_credito_clicado,
                                                                                    tipo_operacao=tipo_operacao_clicada)
-
-    return (fig_tipo_credito_filtrado, fig_quantidade_categoria_filtrado, fig_valor_categoria_tempo_filtrado,
-            fig_funcao_maior_investimento_filtrado, fig_quantidade_tipo_operacao_filtrado)
+    return (fig_tipo_credito_filtrado,
+            fig_quantidade_categoria_filtrado,
+            fig_valor_categoria_tempo_filtrado,
+            fig_funcao_maior_investimento_filtrado,
+            fig_quantidade_tipo_operacao_filtrado)
 
 
 def get_figure_quantidade_categoria(
@@ -198,7 +282,7 @@ def get_figure_quantidade_categoria(
         funcao=funcao
     )
 
-    fig_categoria = px.pie(
+    fig = px.pie(
         dataframe,
         values='quantidade',
         names='categoria',
@@ -210,7 +294,7 @@ def get_figure_quantidade_categoria(
         title_font_color='#ffffff',
         font_color='#ffffff'
     )
-    return fig_categoria
+    return fig
 
 
 def get_figure_quantidade_tipo_operacao(categoria_despesa: str = None,
@@ -222,7 +306,7 @@ def get_figure_quantidade_tipo_operacao(categoria_despesa: str = None,
         funcao=funcao
     )
 
-    fig_categoria = px.pie(
+    fig = px.pie(
         dataframe,
         values='quantidade',
         names='tipo',
@@ -235,7 +319,7 @@ def get_figure_quantidade_tipo_operacao(categoria_despesa: str = None,
         font_color='#ffffff'
     )
 
-    return fig_categoria
+    return fig
 
 
 def get_figure_tipo_credito(
@@ -249,7 +333,7 @@ def get_figure_tipo_credito(
         tipo_operacao=tipo_operacao
     )
 
-    fig_tipo_credito_filtrado = px.bar(
+    fig = px.bar(
         dataframe,
         title='Tipos de Crédito',
         color_discrete_sequence=['#a72626', '#2aa726', '#267ea7', '#a79f26', '#a76326', '#5b26a7', '#a72693'],
@@ -263,7 +347,7 @@ def get_figure_tipo_credito(
         font_color='#ffffff'
     )
 
-    return fig_tipo_credito_filtrado
+    return fig
 
 
 def get_figure_funcoes_maior_investimento(
@@ -277,7 +361,7 @@ def get_figure_funcoes_maior_investimento(
         tipo_operacao=tipo_operacao
     )
 
-    fig_tipo_credito_filtrado = px.bar(
+    fig = px.bar(
         dataframe,
         title='Top 5 Funções com Maior Investimento',
         color_discrete_sequence=['#a72626', '#2aa726', '#267ea7', '#a79f26', '#a76326', '#5b26a7', '#a72693'],
@@ -291,7 +375,7 @@ def get_figure_funcoes_maior_investimento(
         font_color='#ffffff'
     )
 
-    return fig_tipo_credito_filtrado
+    return fig
 
 
 def get_figure_valor_categoria_tempo(
@@ -307,7 +391,7 @@ def get_figure_valor_categoria_tempo(
         funcao=funcao
     )
 
-    fig_valor_categoria_tempo_filtrado = px.line(
+    fig = px.line(
         data_frame=dataframe,
         x='data',
         y='valor',
@@ -322,7 +406,106 @@ def get_figure_valor_categoria_tempo(
         font_color='#ffffff'
     )
 
-    return fig_valor_categoria_tempo_filtrado
+    return fig
+
+
+def get_figure_top5_mais_favorecidos(subitem: str = None, unidade_gestora: str = None):
+    dataframe = liquidacao_dao.get_dataframe_top5_favorecidos(
+        subitem=subitem,
+        unidade_gestora=unidade_gestora
+    )
+
+    fig = px.bar(
+        dataframe,
+        title='Top 5 Mais Favorecidos',
+        color_discrete_sequence=['#a72626', '#2aa726', '#267ea7', '#a79f26', '#a76326', '#5b26a7', '#a72693'],
+        x='favorecido',
+        y='valor',
+        color='favorecido'
+    ).update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        title_font_color='#ffffff',
+        font_color='#ffffff',
+        xaxis=dict(
+            tickmode='array'
+        )
+    )
+
+    return fig
+
+
+def get_figure_top_5_subitens(unidade_gestora: str = None):
+    dataframe = liquidacao_dao.get_dataframe_top5_sub_itens(
+        unidade_gestora=unidade_gestora
+    )
+
+    fig = px.bar(
+        dataframe,
+        title='Top 5 Sub Itens',
+        color_discrete_sequence=['#a72626', '#2aa726', '#267ea7', '#a79f26', '#a76326', '#5b26a7', '#a72693'],
+        x='subitem',
+        y='valor',
+        color='subitem'
+    ).update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        title_font_color='#ffffff',
+        font_color='#ffffff',
+        xaxis=dict(
+            tickmode='array'
+        )
+    )
+
+    return fig
+
+
+def get_figure_top10_diferenca_empenho_liquidacao(unidade_gestora: str = None, subitem: str = None):
+    dataframe = liquidacao_dao.get_dataframe_top10_diferenca_valor_empenho_liquidado(
+        unidade_gestora=unidade_gestora,
+        subitem=subitem
+    )
+
+    fig = px.bar(
+        dataframe.melt(id_vars='subitem', value_vars=['Empenho', 'Liquidado'], var_name='Valores', value_name='Valor'),
+        x='subitem',
+        y='Valor',
+        color='Valores',
+        barmode='group',
+        title='Diferença dos Valores de Empenho e Liquidação',
+        color_discrete_sequence=['#a72626', '#267ea7']
+    ).update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        title_font_color='#ffffff',
+        font_color='#ffffff',
+        xaxis=dict(
+            tickmode='array'
+        )
+    )
+
+    return fig
+
+
+def get_figure_top5_undiades_gestoras_mais_liquidacoes(subitem: str = None):
+    dataframe = liquidacao_dao.get_dataframe_top5_unidades_gestoras(
+        subitem=subitem,
+    )
+
+    fig = px.pie(
+        dataframe,
+        values='quantidade_liquidacoes',
+        names='unidade',
+        title='Top 5 Unidades Gestoras com Mais Liquidações',
+        color_discrete_sequence=['#a72626', '#2aa726', '#267ea7', '#a79f26', '#a76326', '#5b26a7', '#a72693']
+    ).update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        title_font_color='#ffffff',
+        font_color='#ffffff'
+    )
+
+    return fig
 
 
 if __name__ == '__main__':

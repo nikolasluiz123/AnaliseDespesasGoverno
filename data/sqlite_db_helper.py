@@ -61,10 +61,16 @@ class SQLite3Helper:
         self.execute_sql('create index if not exists idx_tipo_credito on despesas_empenho (tipo_credito);')
         self.execute_sql('create index if not exists idx_categoria_de_despesa on despesas_empenho (categoria_de_despesa);')
         self.execute_sql('create index if not exists idx_funcao on despesas_empenho (funcao);')
+        self.execute_sql('create index if not exists idx_codigo_empenho on despesas_empenho (codigo_empenho);')
 
         self.execute_sql('create index if not exists idx_id_empenho_item on despesas_item_empenho (id_empenho);')
         self.execute_sql('create index if not exists idx_id_empenho_historico on despesas_item_empenho_historico (id_empenho);')
         self.execute_sql('create index if not exists idx_tipo_operacao on despesas_item_empenho_historico (tipo_operacao);')
+
+        self.execute_sql('create index if not exists idx_codigo_empenho_impactados on despesas_liquidacao_empenho_impactados (codigo_empenho);')
+        self.execute_sql('create index if not exists idx_codigo_liquidacao_empenho_impactados on despesas_liquidacao_empenho_impactados (codigo_liquidacao);')
+
+        self.execute_sql('create index if not exists idx_codigo_liquidacao on despesas_liquidacao (codigo_liquidacao);')
 
     def __normalize_columns(self, df: pd.DataFrame) -> pd.DataFrame:
         """
