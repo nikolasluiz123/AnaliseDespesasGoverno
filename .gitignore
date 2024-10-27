@@ -143,3 +143,4 @@ dmypy.json
 cython_debug/
 
 data/despesas.db
+google_drive_api/credential/analisedespesasgoverno-2d71cd83b9d1.json

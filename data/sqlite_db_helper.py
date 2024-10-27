@@ -41,15 +41,30 @@ class SQLite3Helper:
 
         print('Iniciando criação do DB...')
 
-        for file_name, url in urls.items():
+        for file_name, local_file_path in urls.items():
             if not self.has_table(file_name):
-                df = pd.read_csv(url, encoding='ISO-8859-1', on_bad_lines='skip', sep=';', low_memory=False)
+                df = pd.read_csv(local_file_path, encoding='ISO-8859-1', on_bad_lines='skip', sep=';', low_memory=False)
                 df = self.__normalize_columns(df)
                 df.to_sql(file_name, self.conn, index=False, if_exists='replace')
                 print(f'Tabela {file_name} criada com sucesso!')
 
+        self.__create_tables_index()
+
         print()
         print('DB criado com sucesso!')
+
+    def __create_tables_index(self):
+        """
+        Função para criar os índices necessários para que os filtros realizados nos dashboards sejam performáticos.
+        """
+        self.execute_sql('create index if not exists idx_id_empenho on despesas_empenho (id_empenho);')
+        self.execute_sql('create index if not exists idx_tipo_credito on despesas_empenho (tipo_credito);')
+        self.execute_sql('create index if not exists idx_categoria_de_despesa on despesas_empenho (categoria_de_despesa);')
+        self.execute_sql('create index if not exists idx_funcao on despesas_empenho (funcao);')
+
+        self.execute_sql('create index if not exists idx_id_empenho_item on despesas_item_empenho (id_empenho);')
+        self.execute_sql('create index if not exists idx_id_empenho_historico on despesas_item_empenho_historico (id_empenho);')
+        self.execute_sql('create index if not exists idx_tipo_operacao on despesas_item_empenho_historico (tipo_operacao);')
 
     def __normalize_columns(self, df: pd.DataFrame) -> pd.DataFrame:
         """

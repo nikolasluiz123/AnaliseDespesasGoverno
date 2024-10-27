@@ -3,7 +3,7 @@ body {
     padding: 0 !important;
 }
 
-.dash-debug-menu, .dash-debug-menu__content, .dash-debug-menu__outer--closed {
+.dash-debug-menu, .dash-debug-menu__content, .dash-debug-menu__outer--closed, .dash-debug-alert-label {
     display: none !important;
 }
 
