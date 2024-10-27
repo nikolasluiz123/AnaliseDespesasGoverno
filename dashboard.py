@@ -3,7 +3,7 @@ import locale
 import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
-from dash import dcc, html, Input, Output
+from dash import dcc, html, Input, Output, State, ALL, callback_context
 
 from data.access_objects.despesas import DespesaEmpenhoDAO
 from data.access_objects.liquidacoes import LiquidacoesDAO
@@ -137,7 +137,7 @@ def exibir_conteudo(aba):
                     },
                     children=[
                         dcc.Graph(
-                            id={'type': 'grafico', 'index': 'top5_unidades_gestoras_mais_liquidacoes'},
+                            id={'type': 'grafico', 'index': 'top5-unidades-gestoras-mais-liquidacoes'},
                             figure=get_figure_top5_undiades_gestoras_mais_liquidacoes(),
                             style={
                                 'width': '50%'
@@ -151,14 +151,14 @@ def exibir_conteudo(aba):
                     },
                     children=[
                         dcc.Graph(
-                            id={'type': 'grafico', 'index': 'top5_favorecidos'},
+                            id={'type': 'grafico', 'index': 'top5-favorecidos'},
                             figure=get_figure_top5_mais_favorecidos(),
                             style={
                                 'width': '50%'
                             }
                         ),
                         dcc.Graph(
-                            id={'type': 'grafico', 'index': 'top5_subitens'},
+                            id={'type': 'grafico', 'index': 'top5-subitens'},
                             figure=get_figure_top_5_subitens(),
                             style={
                                 'width': '50%'
@@ -169,7 +169,7 @@ def exibir_conteudo(aba):
                 html.Div(
                     children=[
                         dcc.Graph(
-                            id={'type': 'grafico', 'index': 'top10_diferenca_empenho_liquidacao'},
+                            id={'type': 'grafico', 'index': 'top5-diferenca-empenho-liquidacao'},
                             figure=get_figure_top10_diferenca_empenho_liquidacao(),
                         )
                     ]
