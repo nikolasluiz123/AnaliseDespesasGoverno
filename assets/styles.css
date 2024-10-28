@@ -6,14 +6,3 @@ body {
 .dash-debug-menu, .dash-debug-menu__content, .dash-debug-menu__outer--closed, .dash-debug-alert-label {
     display: none !important;
 }
-
-.tab {
-    background-color: #2c2c2c !important;
-    border: none !important;
-    color: #a3a3a3 !important;
-}
-
-.tab--selected {
-    border-bottom: 2px solid white !important;
-    color: white !important;
-}

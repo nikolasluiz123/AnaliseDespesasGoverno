@@ -16,3 +16,7 @@ class DAO(ABC):
         else:
             wrapped_text = textwrap.wrap(text, width=text_wrap_limit, break_long_words=False)
             return '<br>'.join(wrapped_text)
+
+    @staticmethod
+    def remove_break_lines(text):
+        return text.replace('<br>', ' ')

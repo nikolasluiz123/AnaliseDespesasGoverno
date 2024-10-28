@@ -23,10 +23,10 @@ class LiquidacoesDAO(DAO):
         where_clauses = []
 
         if subitem is not None:
-            where_clauses.append(f" and liquidacao_empenho.subitem = '{subitem}' ")
+            where_clauses.append(f" and liquidacao_empenho.subitem = '{self.remove_break_lines(subitem)}' ")
 
         if unidade_gestora is not None:
-            where_clauses.append(f" and liquidacao.unidade_gestora = '{unidade_gestora}' ")
+            where_clauses.append(f" and liquidacao.unidade_gestora = '{self.remove_break_lines(unidade_gestora)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -49,7 +49,7 @@ class LiquidacoesDAO(DAO):
 
         return df
 
-    def get_dataframe_top5_sub_itens(self, unidade_gestora: str = None) -> DataFrame:
+    def get_dataframe_top5_sub_itens(self, unidade_gestora: str = None, favorecido: str = None) -> DataFrame:
         query_select = """
             select liquidacao_empenho.subitem as subitem,
                    sum(empenho.valor_do_empenho_convertido_pra_r) as valor
@@ -65,7 +65,10 @@ class LiquidacoesDAO(DAO):
         where_clauses = []
 
         if unidade_gestora is not None:
-            where_clauses.append(f" and liquidacao.unidade_gestora = '{unidade_gestora}' ")
+            where_clauses.append(f" and liquidacao.unidade_gestora = '{self.remove_break_lines(unidade_gestora)}' ")
+
+        if favorecido is not None:
+            where_clauses.append(f" and liquidacao.favorecido = '{self.remove_break_lines(favorecido)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -88,9 +91,10 @@ class LiquidacoesDAO(DAO):
 
         return df
 
-    def get_dataframe_top10_diferenca_valor_empenho_liquidado(self,
-                                                              subitem: str = None,
-                                                              unidade_gestora: str = None) -> DataFrame:
+    def get_dataframe_top5_diferenca_valor_empenho_liquidado(self,
+                                                             subitem: str = None,
+                                                             unidade_gestora: str = None,
+                                                             favorecido: str = None) -> DataFrame:
         query_select = """
             select liquidacao_empenho.subitem as subitem,
                    sum(empenho.valor_do_empenho_convertido_pra_r) as valor_empenho,
@@ -107,10 +111,13 @@ class LiquidacoesDAO(DAO):
         where_clauses = []
 
         if subitem is not None:
-            where_clauses.append(f" and liquidacao_empenho.subitem = '{subitem}' ")
+            where_clauses.append(f" and liquidacao_empenho.subitem = '{self.remove_break_lines(subitem)}' ")
 
         if unidade_gestora is not None:
-            where_clauses.append(f" and liquidacao.unidade_gestora = '{unidade_gestora}' ")
+            where_clauses.append(f" and liquidacao.unidade_gestora = '{self.remove_break_lines(unidade_gestora)}' ")
+
+        if favorecido is not None:
+            where_clauses.append(f" and liquidacao.favorecido = '{self.remove_break_lines(favorecido)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -135,7 +142,7 @@ class LiquidacoesDAO(DAO):
 
         return df
 
-    def get_dataframe_top5_unidades_gestoras(self, subitem: str = None) -> DataFrame:
+    def get_dataframe_top5_unidades_gestoras(self, subitem: str = None, favorecido: str = None) -> DataFrame:
         query_select = """
             select liquidacao.unidade_gestora as unidade, 
                    count(liquidacao.unidade_gestora) as quantidade_liquidacoes
@@ -150,7 +157,10 @@ class LiquidacoesDAO(DAO):
         where_clauses = []
 
         if subitem is not None:
-            where_clauses.append(f" and liquidacao_empenho.subitem = '{subitem}' ")
+            where_clauses.append(f" and liquidacao_empenho.subitem = '{self.remove_break_lines(subitem)}' ")
+
+        if favorecido is not None:
+            where_clauses.append(f" and liquidacao.favorecido = '{self.remove_break_lines(favorecido)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)

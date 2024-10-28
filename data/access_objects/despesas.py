@@ -23,14 +23,14 @@ class DespesaEmpenhoDAO(DAO):
         where_clauses = []
 
         if tipo_credito is not None:
-            where_clauses.append(f" and empenho.tipo_credito = '{tipo_credito}' ")
+            where_clauses.append(f" and empenho.tipo_credito = '{self.remove_break_lines(tipo_credito)}' ")
 
         if tipo_operacao is not None:
             query_from += " inner join despesas_item_empenho_historico historico on empenho.id_empenho = historico.id_empenho "
-            where_clauses.append(f" and historico.tipo_operacao = '{tipo_operacao}' ")
+            where_clauses.append(f" and historico.tipo_operacao = '{self.remove_break_lines(tipo_operacao)}' ")
 
         if funcao is not None:
-            where_clauses.append(f" and empenho.funcao = '{funcao}' ")
+            where_clauses.append(f" and empenho.funcao = '{self.remove_break_lines(funcao)}' ")
 
         if  len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -44,7 +44,10 @@ class DespesaEmpenhoDAO(DAO):
             {query_group_by}
         """
 
-        return self.helper.get_dataframe(query)
+        df = self.helper.get_dataframe(query)
+        df['categoria'] = df['categoria'].apply(self.insert_break_line)
+
+        return df
 
     def get_dataframe_valor_categoria_tempo(self,
                                             tipo_credito: str=None,
@@ -65,17 +68,17 @@ class DespesaEmpenhoDAO(DAO):
         where_clauses = []
 
         if tipo_credito is not None:
-            where_clauses.append(f" and empenho.tipo_credito = '{tipo_credito}' ")
+            where_clauses.append(f" and empenho.tipo_credito = '{self.remove_break_lines(tipo_credito)}' ")
 
         if categoria_despesa is not None:
-            where_clauses.append(f" and empenho.categoria_de_despesa = '{categoria_despesa}' ")
+            where_clauses.append(f" and empenho.categoria_de_despesa = '{self.remove_break_lines(categoria_despesa)}' ")
 
         if funcao is not None:
-            where_clauses.append(f" and empenho.funcao = '{funcao}' ")
+            where_clauses.append(f" and empenho.funcao = '{self.remove_break_lines(funcao)}' ")
 
         if tipo_operacao is not None:
             query_from += " inner join despesas_item_empenho_historico historico on empenho.id_empenho = historico.id_empenho "
-            where_clauses.append(f" and historico.tipo_operacao = '{tipo_operacao}' ")
+            where_clauses.append(f" and historico.tipo_operacao = '{self.remove_break_lines(tipo_operacao)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -92,6 +95,7 @@ class DespesaEmpenhoDAO(DAO):
         """
 
         df = self.helper.get_dataframe(query)
+        df['categoria'] = df['categoria'].apply(self.insert_break_line)
         df['data'] = pd.to_datetime(df['data'], format='%Y%m%d')
 
         return df
@@ -113,14 +117,14 @@ class DespesaEmpenhoDAO(DAO):
         where_clauses = []
 
         if categoria_despesa is not None:
-            where_clauses.append(f" and empenho.categoria_de_despesa = '{categoria_despesa}' ")
+            where_clauses.append(f" and empenho.categoria_de_despesa = '{self.remove_break_lines(categoria_despesa)}' ")
 
         if funcao is not None:
             where_clauses.append(f" and empenho.funcao = '{funcao}' ")
 
         if tipo_operacao is not None:
             query_from += " inner join despesas_item_empenho_historico historico on empenho.id_empenho = historico.id_empenho "
-            where_clauses.append(f" and historico.tipo_operacao = '{tipo_operacao}' ")
+            where_clauses.append(f" and historico.tipo_operacao = '{self.remove_break_lines(tipo_operacao)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -136,7 +140,10 @@ class DespesaEmpenhoDAO(DAO):
             {order_by}
         """
 
-        return self.helper.get_dataframe(query)
+        df = self.helper.get_dataframe(query)
+        df['tipo'] = df['tipo'].apply(self.insert_break_line)
+
+        return df
 
     def get_dataframe_top5_funcoes_maior_investimento(self,
                                                       categoria_despesa: str = None,
@@ -155,14 +162,14 @@ class DespesaEmpenhoDAO(DAO):
         where_clauses = []
 
         if categoria_despesa is not None:
-            where_clauses.append(f" and empenho.categoria_de_despesa = '{categoria_despesa}' ")
+            where_clauses.append(f" and empenho.categoria_de_despesa = '{self.remove_break_lines(categoria_despesa)}' ")
 
         if tipo_credito is not None:
-            where_clauses.append(f" and empenho.tipo_credito = '{tipo_credito}' ")
+            where_clauses.append(f" and empenho.tipo_credito = '{self.remove_break_lines(tipo_credito)}' ")
 
         if tipo_operacao is not None:
             query_from += " inner join despesas_item_empenho_historico historico on empenho.id_empenho = historico.id_empenho "
-            where_clauses.append(f" and historico.tipo_operacao = '{tipo_operacao}' ")
+            where_clauses.append(f" and historico.tipo_operacao = '{self.remove_break_lines(tipo_operacao)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -180,7 +187,10 @@ class DespesaEmpenhoDAO(DAO):
                     {query_limit}
                 """
 
-        return self.helper.get_dataframe(query)
+        df = self.helper.get_dataframe(query)
+        df['funcao'] = df['funcao'].apply(self.insert_break_line)
+
+        return df
 
     def get_dataframe_quantidade_tipo_operacao(self,
                                                categoria_despesa: str = None,
@@ -202,13 +212,13 @@ class DespesaEmpenhoDAO(DAO):
         where_clauses = []
 
         if categoria_despesa is not None:
-            where_clauses.append(f" and empenho.categoria_de_despesa = '{categoria_despesa}' ")
+            where_clauses.append(f" and empenho.categoria_de_despesa = '{self.remove_break_lines(categoria_despesa)}' ")
 
         if tipo_credito is not None:
-            where_clauses.append(f" and empenho.tipo_credito = '{tipo_credito}' ")
+            where_clauses.append(f" and empenho.tipo_credito = '{self.remove_break_lines(tipo_credito)}' ")
 
         if funcao is not None:
-            where_clauses.append(f" and empenho.funcao = '{funcao}' ")
+            where_clauses.append(f" and empenho.funcao = '{self.remove_break_lines(funcao)}' ")
 
         if len(where_clauses) > 0:
             query_where += " ".join(where_clauses)
@@ -224,4 +234,7 @@ class DespesaEmpenhoDAO(DAO):
                     {query_order_by}
                 """
 
-        return self.helper.get_dataframe(query)
+        df = self.helper.get_dataframe(query)
+        df['tipo'] = df['tipo'].apply(self.insert_break_line)
+
+        return df

@@ -17,7 +17,7 @@ class SQLite3Helper:
         :param db_name: Nome do arquivo de banco
         """
 
-        self.conn = sqlite3.connect(f'data/{db_name}.db', check_same_thread=False)
+        self.conn = sqlite3.connect(fr'C:\Users\nikol\git\analise_dados\AnaliseDespesasGoverno\data\{db_name}.db', check_same_thread=False)
 
     def has_table(self, table_name) -> bool:
         """
@@ -71,6 +71,9 @@ class SQLite3Helper:
         self.execute_sql('create index if not exists idx_codigo_liquidacao_empenho_impactados on despesas_liquidacao_empenho_impactados (codigo_liquidacao);')
 
         self.execute_sql('create index if not exists idx_codigo_liquidacao on despesas_liquidacao (codigo_liquidacao);')
+
+        self.execute_sql('create index if not exists idx_codigo_pagamento_bancos on despesas_pagamento_lista_bancos (codigo_pagamento);')
+        self.execute_sql('create index if not exists idx_codigo_pagamento on despesas_pagamento (codigo_pagamento);')
 
     def __normalize_columns(self, df: pd.DataFrame) -> pd.DataFrame:
         """
