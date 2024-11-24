@@ -12,12 +12,26 @@ class SQLite3Helper:
     Classe helper para execução de comandos SQL e controle de conexão.
     """
 
+    _urls = {
+        'despesas_empenho': '../data/files/Despesas_Empenho.csv',
+        'despesas_item_empenho': '../data/files/Despesas_ItemEmpenho.csv',
+        'despesas_item_empenho_historico': '../data/files/Despesas_ItemEmpenhoHistorico.csv',
+        'despesas_liquidacao_empenho_impactados': '../data/files/Despesas_Liquidacao_EmpenhosImpactados.csv',
+        'despesas_liquidacao': '../data/files/Despesas_Liquidacao.csv',
+        'despesas_pagamento_empenhos_impactados': '../data/files/Despesas_Pagamento_EmpenhosImpactados.csv',
+        'despesas_pagamento_favorecidos_finais': '../data/files/Despesas_Pagamento_FavorecidosFinais.csv',
+        'despesas_pagamento_lista_bancos': '../data/files/Despesas_Pagamento_ListaBancos.csv',
+        'despesas_pagamento_lista_faturas': '../data/files/Despesas_Pagamento_ListaFaturas.csv',
+        'despesas_pagamento_lista_precatorios': '../data/files/Despesas_Pagamento_ListaPrecatorios.csv',
+        'despesas_pagamento': '../data/files/Despesas_Pagamento.csv'
+    }
+
     def __init__(self, db_name):
         """
         :param db_name: Nome do arquivo de banco
         """
 
-        self.conn = sqlite3.connect(fr'C:\Users\nikol\git\analise_dados\AnaliseDespesasGoverno\data\{db_name}.db', check_same_thread=False)
+        self.conn = sqlite3.connect(f'../data/{db_name}.db', check_same_thread=False)
 
     def has_table(self, table_name) -> bool:
         """
@@ -31,17 +45,15 @@ class SQLite3Helper:
 
         return name is not None
 
-    def create_database(self, urls: dict[str, str]):
+    def create_database(self):
         """
         Função que realiza a criação do db. Essa operação é executada apenas quando não existir a tabela com o nome
         definido na chave do dicionário de urls.
-
-        :param urls: Dicionário com as chaves que vão ser o nome das tabelas e as urls que apontam para o arquivo csv.
         """
 
         print('Iniciando criação do DB...')
 
-        for file_name, local_file_path in urls.items():
+        for file_name, local_file_path in self._urls.items():
             if not self.has_table(file_name):
                 df = pd.read_csv(local_file_path, encoding='ISO-8859-1', on_bad_lines='skip', sep=';', low_memory=False)
                 df = self.__normalize_columns(df)

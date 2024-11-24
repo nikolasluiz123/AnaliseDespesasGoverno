@@ -4,6 +4,9 @@ from data.access_objects.common import DAO
 
 
 class LiquidacoesDAO(DAO):
+    """
+    Implementação de acesso a dados das Liquidações.
+    """
 
     def get_dataframe_top5_favorecidos(self,
                                        subitem: str = None,

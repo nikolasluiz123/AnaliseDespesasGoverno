@@ -11,22 +11,8 @@ from liquidacao.figures import get_figure_top5_diferenca_empenho_liquidacao, get
 
 locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
-urls = {
-    'despesas_empenho': 'data/files/Despesas_Empenho.csv',
-    'despesas_item_empenho': 'data/files/Despesas_ItemEmpenho.csv',
-    'despesas_item_empenho_historico': 'data/files/Despesas_ItemEmpenhoHistorico.csv',
-    'despesas_liquidacao_empenho_impactados': 'data/files/Despesas_Liquidacao_EmpenhosImpactados.csv',
-    'despesas_liquidacao': 'data/files/Despesas_Liquidacao.csv',
-    'despesas_pagamento_empenhos_impactados': 'data/files/Despesas_Pagamento_EmpenhosImpactados.csv',
-    'despesas_pagamento_favorecidos_finais': 'data/files/Despesas_Pagamento_FavorecidosFinais.csv',
-    'despesas_pagamento_lista_bancos': 'data/files/Despesas_Pagamento_ListaBancos.csv',
-    'despesas_pagamento_lista_faturas': 'data/files/Despesas_Pagamento_ListaFaturas.csv',
-    'despesas_pagamento_lista_precatorios': 'data/files/Despesas_Pagamento_ListaPrecatorios.csv',
-    'despesas_pagamento': 'data/files/Despesas_Pagamento.csv'
-}
-
 helper = SQLite3Helper(db_name='despesas')
-helper.create_database(urls=urls)
+helper.create_database()
 
 liquidacao_dao = LiquidacoesDAO(helper)
 
@@ -141,4 +127,4 @@ def atualizar_graficos(click_data_unidade_gestora,
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='192.168.0.41', port=8051)
+    app.run(debug=True, host='localhost', port=8051)

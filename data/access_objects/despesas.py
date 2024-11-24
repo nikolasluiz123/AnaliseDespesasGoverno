@@ -5,6 +5,9 @@ from data.access_objects.common import DAO
 
 
 class DespesaEmpenhoDAO(DAO):
+    """
+    Implementação de acesso aos dados de Empenho
+    """
 
     def get_dataframe_quantidade_categorias(self,
                                             tipo_credito: str=None,

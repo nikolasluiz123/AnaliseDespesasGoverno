@@ -4,6 +4,9 @@ from data.access_objects.common import DAO
 
 
 class PagamentosDAO(DAO):
+    """
+    Implementação de acesso aos dados dos Pagamentos.
+    """
 
     def get_dataframe_top5_bancos_mais_utilizados(self, extraorcamentario: str = None) -> DataFrame:
         query_select = """
